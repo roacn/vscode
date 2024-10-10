@@ -4342,6 +4342,11 @@ export class ChatCompletionItem implements vscode.ChatCompletionItem {
 	}
 }
 
+export enum ChatEditingSessionActionOutcome {
+	Accepted = 1,
+	Rejected = 2
+}
+
 //#endregion
 
 //#region Interactive Editor
@@ -4420,10 +4425,13 @@ export class ChatResponseFileTreePart {
 	}
 }
 
-export class ChatResponseAnchorPart {
+export class ChatResponseAnchorPart implements vscode.ChatResponseAnchorPart {
 	value: vscode.Uri | vscode.Location;
-	value2: vscode.Uri | vscode.Location | vscode.SymbolInformation;
 	title?: string;
+
+	value2: vscode.Uri | vscode.Location | vscode.SymbolInformation;
+	resolve?(token: vscode.CancellationToken): Thenable<void>;
+
 	constructor(value: vscode.Uri | vscode.Location | vscode.SymbolInformation, title?: string) {
 		this.value = value as any;
 		this.value2 = value;
@@ -4575,7 +4583,7 @@ export enum LanguageModelChatMessageRole {
 	System = 3
 }
 
-export class LanguageModelToolResultPart implements vscode.LanguageModelChatMessageToolResultPart {
+export class LanguageModelToolResultPart implements vscode.LanguageModelToolResultPart {
 
 	toolCallId: string;
 	content: string;
@@ -4602,7 +4610,7 @@ export class LanguageModelChatMessage implements vscode.LanguageModelChatMessage
 
 	role: vscode.LanguageModelChatMessageRole;
 	content: string;
-	content2: (string | vscode.LanguageModelChatMessageToolResultPart | vscode.LanguageModelChatResponseToolCallPart)[];
+	content2: (string | vscode.LanguageModelToolResultPart | vscode.LanguageModelToolCallPart)[];
 	name: string | undefined;
 
 	constructor(role: vscode.LanguageModelChatMessageRole, content: string, name?: string) {
@@ -4613,7 +4621,7 @@ export class LanguageModelChatMessage implements vscode.LanguageModelChatMessage
 	}
 }
 
-export class LanguageModelToolCallPart implements vscode.LanguageModelChatResponseToolCallPart {
+export class LanguageModelToolCallPart implements vscode.LanguageModelToolCallPart {
 	name: string;
 	toolCallId: string;
 	parameters: any;
@@ -4625,7 +4633,7 @@ export class LanguageModelToolCallPart implements vscode.LanguageModelChatRespon
 	}
 }
 
-export class LanguageModelTextPart implements vscode.LanguageModelChatResponseTextPart {
+export class LanguageModelTextPart implements vscode.LanguageModelTextPart {
 	value: string;
 
 	constructor(value: string) {
